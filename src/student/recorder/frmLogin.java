@@ -5,24 +5,40 @@
  */
 package student.recorder;
 
+import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+
 
 /**
  *
  * @author Ian
  */
-public class Login extends javax.swing.JFrame {
+public class frmLogin extends javax.swing.JFrame {
 
+    // Global variable declaration
+    JFrame frame = new JFrame();
+    
+    // On enter press detection
+    Action action = new AbstractAction()
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            LoginUser();
+            System.out.print("Enter Pressed");
+        }
+    };
+    
     /**
      * Creates new form Login
      */
-    public Login() {
+    public frmLogin() {
         initComponents();
         
         // Add margin to Username and Password input
@@ -35,7 +51,11 @@ public class Login extends javax.swing.JFrame {
             txtPassword.getBorder(),
             BorderFactory.createEmptyBorder(2, 5, 2, 5)));
         // </editor-fold>
+        
+        txtUserName.addActionListener(action);
+        txtPassword.addActionListener(action);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -81,6 +101,8 @@ public class Login extends javax.swing.JFrame {
 
         btnLogin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnLogin.setText("LOGIN");
+        btnLogin.setBorder(null);
+        btnLogin.setBorderPainted(false);
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
@@ -155,25 +177,58 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         System.out.println("Login btn clicked");
+        LoginUser();
+        
+    }//GEN-LAST:event_btnLoginActionPerformed
+    
+    // Login User with username and password
+    public void LoginUser(){
+        
+        String strUserName = txtUserName.getText().toString();
+        String strPassword = txtPassword.getText().toString();
+        
+        // Input validation
+        if(strUserName.equals("") && strPassword.equals("")){
+            JOptionPane.showMessageDialog(frame, "Please Enter User Name and Password");
+            return;
+        }else if(strUserName.equals("")){
+            JOptionPane.showMessageDialog(frame, "Please Enter Your Username");
+            return;
+        }else if(strPassword.equals("")){
+            JOptionPane.showMessageDialog(frame, "Please Enter Your Password");
+            return;
+        }
         
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsysdb","root","");  
-            //here sonoo is database name, root is username and password  
-            Statement stmt=con.createStatement();  
-            ResultSet rs=stmt.executeQuery("select * from tblstaff");  
-            while(rs.next())  
-                System.out.println(rs.getString(1)+"  "+rs.getString(2)+"  "+rs.getString(3));  
-            con.close();  
-        } catch (Exception ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            Statement stmt = con.createStatement();
+            
+            // Get data based on user provided username and password
+            ResultSet rs=stmt.executeQuery(
+            "SELECT * FROM tblstaff WHERE "
+                    + "UserName = '" + strUserName + "' AND "
+                    + "Password = '" + strPassword + "'");  
+            
+            // Show login result
+            if(rs.next()){
+                // JOptionPane.showMessageDialog(frame, "Login Succeed");
+                new frmStudentForm().setVisible(true);
+                this.setVisible(false);
+                this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(frame, "Login Failed");
+            }
+            
+            // Close Connection
+            con.close();
+            
+        }catch(Exception ex){
             System.out.println(ex);
         }
-        
-        JFrame frame = new JFrame();
-        JOptionPane.showMessageDialog(frame, "Hello Java");
-    }//GEN-LAST:event_btnLoginActionPerformed
-
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -192,20 +247,21 @@ public class Login extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login().setVisible(true);
+                new frmLogin().setVisible(true);
             }
         });
     }
