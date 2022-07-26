@@ -21,19 +21,6 @@ import javax.swing.Action;
  */
 public class frmLogin extends javax.swing.JFrame {
 
-    // Global variable declaration
-    JFrame frame = new JFrame();
-    
-    // On enter press detection
-    Action action = new AbstractAction()
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            LoginUser();
-            System.out.print("Enter Pressed");
-        }
-    };
     
     /**
      * Creates new form Login
@@ -181,54 +168,6 @@ public class frmLogin extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnLoginActionPerformed
     
-    // Login User with username and password
-    public void LoginUser(){
-        
-        String strUserName = txtUserName.getText().toString();
-        String strPassword = txtPassword.getText().toString();
-        
-        // Input validation
-        if(strUserName.equals("") && strPassword.equals("")){
-            JOptionPane.showMessageDialog(frame, "Please Enter User Name and Password");
-            return;
-        }else if(strUserName.equals("")){
-            JOptionPane.showMessageDialog(frame, "Please Enter Your Username");
-            return;
-        }else if(strPassword.equals("")){
-            JOptionPane.showMessageDialog(frame, "Please Enter Your Password");
-            return;
-        }
-        
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsysdb","root","");  
-            Statement stmt = con.createStatement();
-            
-            // Get data based on user provided username and password
-            ResultSet rs=stmt.executeQuery(
-            "SELECT * FROM tblstaff WHERE "
-                    + "UserName = '" + strUserName + "' AND "
-                    + "Password = '" + strPassword + "'");  
-            
-            // Show login result
-            if(rs.next()){
-                // JOptionPane.showMessageDialog(frame, "Login Succeed");
-                new frmStudentForm().setVisible(true);
-                this.setVisible(false);
-                this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-                this.dispose();
-            }else{
-                JOptionPane.showMessageDialog(frame, "Login Failed");
-            }
-            
-            // Close Connection
-            con.close();
-            
-        }catch(Exception ex){
-            System.out.println(ex);
-        }
-    }
-    
     /**
      * @param args the command line arguments
      */
@@ -264,6 +203,68 @@ public class frmLogin extends javax.swing.JFrame {
                 new frmLogin().setVisible(true);
             }
         });
+    }
+    
+    // Global variable declaration
+    JFrame frame = new JFrame();
+    
+    // On enter press detection
+    Action action = new AbstractAction(){
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            LoginUser();
+            System.out.print("Enter Pressed");
+        }
+    };
+    
+    // Login User with username and password
+    public void LoginUser(){
+        
+        String strUserName = txtUserName.getText().toString();
+        String strPassword = txtPassword.getText().toString();
+        
+        // Input validation
+        if(strUserName.equals("") && strPassword.equals("")){
+            JOptionPane.showMessageDialog(frame, "Please Enter User Name and Password");
+            return;
+        }else if(strUserName.equals("")){
+            JOptionPane.showMessageDialog(frame, "Please Enter Your Username");
+            return;
+        }else if(strPassword.equals("")){
+            JOptionPane.showMessageDialog(frame, "Please Enter Your Password");
+            return;
+        }
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsysdb","root","");  
+            Statement stmt = con.createStatement();
+            
+            // Get data based on user provided username and password
+            ResultSet rs=stmt.executeQuery(
+            "SELECT * FROM tblstaff WHERE "
+                    + "UserName = '" + strUserName + "' AND "
+                    + "Password = '" + strPassword + "'");  
+            
+            // Show login result
+            if(rs.next()){
+                // JOptionPane.showMessageDialog(frame, "Login Succeed");
+                //new frmStudentForm().setVisible(true);
+                new frmStudentEntry().setVisible(true);
+                this.setVisible(false);
+                this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(frame, "Login Failed");
+            }
+            
+            // Close Connection
+            con.close();
+            
+        }catch(Exception ex){
+            System.out.println(ex);
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
