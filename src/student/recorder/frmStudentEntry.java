@@ -5,8 +5,17 @@
  */
 package student.recorder;
 
+import com.mysql.jdbc.Connection;
 import javax.swing.BorderFactory;
 import javax.swing.table.DefaultTableModel;
+
+
+import java.sql.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -48,10 +57,7 @@ public class frmStudentEntry extends javax.swing.JFrame {
         
         // </editor-fold>
         
-        // test table
-        String data[] = {"Ian", "Deladia", "Ermino", "BSCS"};
-        
-        DefaultTableModel tblModel = (DefaultTableModel) tblStudent.getModel();
+        loadStudents();
         
     }
     
@@ -69,16 +75,16 @@ public class frmStudentEntry extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        txtFirstName = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnAdd = new java.awt.Button();
         txtId = new javax.swing.JTextField();
+        txtFirstName = new javax.swing.JTextField();
         txtMiddleName = new javax.swing.JTextField();
         txtLastName = new javax.swing.JTextField();
         txtCourse = new javax.swing.JTextField();
         txtAddress = new javax.swing.JTextField();
+        btnAdd = new java.awt.Button();
         btnUpdate = new java.awt.Button();
         btnDelete = new java.awt.Button();
         jLabel8 = new javax.swing.JLabel();
@@ -108,11 +114,6 @@ public class frmStudentEntry extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        txtFirstName.setBackground(new java.awt.Color(255, 255, 255));
-        txtFirstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtFirstName.setForeground(new java.awt.Color(0, 0, 0));
-        txtFirstName.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("ID");
@@ -137,16 +138,15 @@ public class frmStudentEntry extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
         );
 
-        btnAdd.setBackground(new java.awt.Color(102, 102, 102));
-        btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
-        btnAdd.setLabel("ADD");
-
         txtId.setBackground(new java.awt.Color(255, 255, 255));
         txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtId.setForeground(new java.awt.Color(0, 0, 0));
         txtId.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        txtFirstName.setBackground(new java.awt.Color(255, 255, 255));
+        txtFirstName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtFirstName.setForeground(new java.awt.Color(0, 0, 0));
+        txtFirstName.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         txtMiddleName.setBackground(new java.awt.Color(255, 255, 255));
         txtMiddleName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -167,6 +167,17 @@ public class frmStudentEntry extends javax.swing.JFrame {
         txtAddress.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtAddress.setForeground(new java.awt.Color(0, 0, 0));
         txtAddress.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        btnAdd.setBackground(new java.awt.Color(102, 102, 102));
+        btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnAdd.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
+        btnAdd.setLabel("ADD");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setBackground(new java.awt.Color(102, 102, 102));
         btnUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -221,6 +232,7 @@ public class frmStudentEntry extends javax.swing.JFrame {
                 "ID", "Firstname", "Middlename", "Lastname", "Course", "Address"
             }
         ));
+        tblStudent.setRowHeight(30);
         jScrollPane2.setViewportView(tblStudent);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -300,8 +312,8 @@ public class frmStudentEntry extends javax.swing.JFrame {
                                 .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -318,6 +330,11 @@ public class frmStudentEntry extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here
+        addStudentData();
+    }//GEN-LAST:event_btnAddActionPerformed
 
     /**
      * @param args the command line arguments
@@ -354,6 +371,86 @@ public class frmStudentEntry extends javax.swing.JFrame {
         });
     }
     
+    // Object Declaration
+    JFrame jframe = new JFrame();
+    
+    public void addStudentData(){
+        
+        DefaultTableModel tblModel = (DefaultTableModel) tblStudent.getModel();
+        
+        String id = txtId.getText().toString();
+        String fname = txtFirstName.getText().toString();
+        String mname = txtMiddleName.getText().toString();
+        String lname = txtLastName.getText().toString();
+        String course = txtCourse.getText().toString();
+        String address = txtAddress.getText().toString();
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsysdb","root","");
+            Statement stmt = con.createStatement();
+            
+            stmt.execute(
+                        "INSERT INTO tblstudent "
+                    +   "VALUES ('" + 
+                                id      + "', '" 
+                    +           fname   + "', '"
+                    +           mname   + "', '"
+                    +           lname   + "', '"
+                    +           course  + "', '"
+                    +           address + "' "
+                    +   ");"
+            );
+            
+            JOptionPane.showMessageDialog(jframe, "Student information added to the database successfully!");
+            con.close();
+        }catch(SQLException sqlExc){
+            JOptionPane.showMessageDialog(jframe, "Can't add student information to the database ");
+            System.out.println(sqlExc);
+        }catch(ClassNotFoundException cnfExc){
+            JOptionPane.showMessageDialog(jframe, "Can't find Driver for the database ");
+            System.out.println(cnfExc);
+        }
+        
+        String StudentInfo[] = {id, fname, mname, lname, course, address};
+        
+        tblModel.addRow(StudentInfo);
+    }
+    
+    public void loadStudents(){
+        String q = "SELECT * FROM tblstudent";
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsysdb","root","");
+            Statement stmt = con.createStatement();
+            
+            ResultSet rs = stmt.executeQuery(q);
+            
+            DefaultTableModel tblModel = (DefaultTableModel) tblStudent.getModel();
+            
+            while(rs.next()){
+                String StudentInfo[] = {
+                    rs.getString("ID"),
+                    rs.getString("FirstName"),
+                    rs.getString("MiddleName"),
+                    rs.getString("LastName"),
+                    rs.getString("Course"),
+                    rs.getString("Address")
+                };
+                
+                tblModel.addRow(StudentInfo);
+            }
+            
+            con.close();
+        }catch(SQLException sqlExc){
+            JOptionPane.showMessageDialog(jframe, sqlExc.getMessage());
+            System.out.println(sqlExc);
+        }catch(ClassNotFoundException cnfExc){
+            JOptionPane.showMessageDialog(jframe, cnfExc.getMessage());
+            System.out.println(cnfExc);
+        }
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button btnAdd;
