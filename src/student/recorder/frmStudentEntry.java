@@ -15,6 +15,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 
 /**
@@ -58,7 +59,7 @@ public class frmStudentEntry extends javax.swing.JFrame {
         // </editor-fold>
         
         loadStudents();
-        
+        // tblStudent.setModel(tableModel);
     }
     
     
@@ -233,6 +234,11 @@ public class frmStudentEntry extends javax.swing.JFrame {
             }
         ));
         tblStudent.setRowHeight(30);
+        tblStudent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblStudentsMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblStudent);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -335,6 +341,19 @@ public class frmStudentEntry extends javax.swing.JFrame {
         // TODO add your handling code here
         addStudentData();
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void tblStudentsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblStudentsMouseClicked
+        // TODO add your handling code here:
+        int selectedRow = tblStudent.getSelectedRow();
+        JTable tbl = tblStudent;
+        
+        txtId.setText(tbl.getValueAt(selectedRow, 0).toString());
+        txtFirstName.setText(tbl.getValueAt(selectedRow, 1).toString());
+        txtMiddleName.setText(tbl.getValueAt(selectedRow, 2).toString());
+        txtLastName.setText(tbl.getValueAt(selectedRow, 3).toString());
+        txtCourse.setText(tbl.getValueAt(selectedRow, 4).toString());
+        txtAddress.setText(tbl.getValueAt(selectedRow, 5).toString());
+    }//GEN-LAST:event_tblStudentsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -451,6 +470,18 @@ public class frmStudentEntry extends javax.swing.JFrame {
             System.out.println(cnfExc);
         }
     }
+    
+    DefaultTableModel tableModel = new DefaultTableModel() {
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+           //all cells false
+           return false;
+        }
+    };
+
+
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button btnAdd;
