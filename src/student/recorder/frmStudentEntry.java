@@ -6,6 +6,7 @@
 package student.recorder;
 
 import com.mysql.jdbc.Connection;
+import java.awt.HeadlessException;
 import javax.swing.BorderFactory;
 import javax.swing.table.DefaultTableModel;
 
@@ -191,6 +192,11 @@ public class frmStudentEntry extends javax.swing.JFrame {
         btnDelete.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setLabel("DELETE");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
@@ -338,7 +344,7 @@ public class frmStudentEntry extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here
+        // TODO add your handling code here        
         addStudentData();
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -354,6 +360,20 @@ public class frmStudentEntry extends javax.swing.JFrame {
         txtCourse.setText(tbl.getValueAt(selectedRow, 4).toString());
         txtAddress.setText(tbl.getValueAt(selectedRow, 5).toString());
     }//GEN-LAST:event_tblStudentsMouseClicked
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        
+        // Deletion confirmation
+        int input = JOptionPane.showConfirmDialog(null, 
+                "Do you want to delete this student information?", "Delete Record",
+                JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+		
+        // if the user click yes
+        if(input == 0){
+            deleteStudentData();
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -434,6 +454,34 @@ public class frmStudentEntry extends javax.swing.JFrame {
         String StudentInfo[] = {id, fname, mname, lname, course, address};
         
         tblModel.addRow(StudentInfo);
+    }
+    
+    public void deleteStudentData(){
+        
+        DefaultTableModel tbl = (DefaultTableModel) tblStudent.getModel();
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/studentsysdb","root","");
+            Statement stmt = con.createStatement();
+            
+            // delete from database
+            stmt.execute("DELETE FROM tblstudent WHERE ID = '" + txtId.getText().toString() + "'");
+            
+            // delete from the jtable
+            for(int r = 0; r < tbl.getRowCount(); r++){   
+                // search for row with the equevalent id
+                if(tblStudent.getValueAt(r, 0).toString().equals(txtId.getText().toString())){
+                    tbl.removeRow(r);
+                }
+            }
+            JOptionPane.showMessageDialog(jframe, "Record deleted sucessfully");            
+            
+
+        }catch(HeadlessException | ClassNotFoundException | SQLException e){
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(jframe, "Failed to delete student record");
+        }
     }
     
     public void loadStudents(){
